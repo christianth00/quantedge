@@ -18,6 +18,7 @@ PostJson = Callable[..., Awaitable[dict]]
 
 async def get_text(url: str, params: dict | None = None, headers: dict | None = None) -> str:
     async with httpx.AsyncClient(
+        verify=False,
         timeout=20,
         follow_redirects=True,
         headers=headers or {"User-Agent": USER_AGENT},
@@ -34,6 +35,7 @@ async def get_text(url: str, params: dict | None = None, headers: dict | None = 
 
 async def get_bytes(url: str, params: dict | None = None, headers: dict | None = None) -> bytes:
     async with httpx.AsyncClient(
+        verify=False,
         timeout=30,  # binary sources (Excel files) are MB-sized
         follow_redirects=True,
         headers=headers or {"User-Agent": USER_AGENT},
@@ -49,6 +51,7 @@ async def get_bytes(url: str, params: dict | None = None, headers: dict | None =
 
 async def post_json(url: str, json: Any, headers: dict | None = None) -> dict:
     async with httpx.AsyncClient(
+        verify=False,
         timeout=20,
         follow_redirects=True,
         headers=headers or {"User-Agent": USER_AGENT},

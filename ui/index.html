@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>os-bloom</title>
+  <title>QuantEdge</title>
   <link rel="stylesheet" href="vendor/uplot/uPlot.min.css">
   <link rel="stylesheet" href="css/terminal.css">
 </head>
 <body>
   <header>
-    <span class="brand">OS-BLOOM</span>
+    <span class="brand">QuantEdge</span>
     <span id="clock" class="muted"></span>
     <span id="banner" class="banner hidden"></span>
   </header>
@@ -21,6 +21,8 @@
     <a href="#/credit" data-tab-link="credit">CREDIT</a>
     <a href="#/profit" data-tab-link="profit">PROFIT</a>
     <a href="#/pos" data-tab-link="pos">POS</a>
+      <a href="#/quant" data-tab-link="quant">QUANT</a>
+      <a href="#/backtest" data-tab-link="backtest">BACKTEST</a>
   </nav>
   <main class="grid" data-tab="mkt">
     <section class="col-left">
@@ -70,6 +72,72 @@
   <main class="grid grid-cycle hidden" data-tab="credit" id="cycle-credit"></main>
   <main class="grid grid-cycle hidden" data-tab="profit" id="cycle-profit"></main>
   <main class="grid grid-cycle hidden" data-tab="pos" id="cycle-pos"></main>
+  <main class="grid hidden" data-tab="quant">
+    <section class="col-left" style="width: 100%;">
+      <div class="panel" id="panel-quant">
+        <div class="panel-title">MENTHORQ LEVELS</div>
+        <div class="panel-body"></div>
+        <div class="panel-foot muted"></div>
+      </div>
+    </section>
+  </main>
+
+  
+  <main class="grid hidden" data-tab="backtest">
+    <section class="col-left" style="width: 100%;">
+      <div class="panel" id="panel-backtest">
+        <div class="panel-title">QUANTITATIVE GOLD ENGINE</div>
+        <div class="panel-body">
+          
+          <div style="margin: 15px; display: flex; gap: 20px; align-items: flex-end;">
+            <div>
+                <label style="display:block; font-size:12px; margin-bottom:5px;">Market / Symbols</label>
+                <label><input type="checkbox" name="symbols" value="GC" checked> GC</label>
+                <label><input type="checkbox" name="symbols" value="NQ"> NQ</label>
+                <label><input type="checkbox" name="symbols" value="ES"> ES</label>
+                <label><input type="checkbox" name="symbols" value="SI"> SI</label>
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; margin-bottom:5px;">Strategy</label>
+                <select id="strategy-select" style="background:var(--bg); color:var(--fg); border:1px solid var(--border);">
+                    <option value="gex_confluence">GEX Confluence</option>
+                    <option value="vwap_mean_reversion">VWAP Mean Reversion</option>
+                    <option value="vah_val_retest">VAH/VAL Retest</option>
+                    <option value="gamma_flip">Gamma Flip Momentum</option>
+                </select>
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; margin-bottom:5px;">Start Date</label>
+                <input type="date" id="start-date" value="2026-08-01" style="background:var(--bg); color:var(--fg); border:1px solid var(--border);">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; margin-bottom:5px;">End Date</label>
+                <input type="date" id="end-date" value="2026-09-08" style="background:var(--bg); color:var(--fg); border:1px solid var(--border);">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; margin-bottom:5px;">Stop Ticks</label>
+                <input type="number" id="stop-ticks" value="40" style="width:60px; background:var(--bg); color:var(--fg); border:1px solid var(--border);">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; margin-bottom:5px;">Target Ticks</label>
+                <input type="number" id="target-ticks" value="80" style="width:60px; background:var(--bg); color:var(--fg); border:1px solid var(--border);">
+            </div>
+            <button id="run-backtest-btn" style="padding: 5px 15px;">Run Strategy</button>
+          </div>
+
+          
+          <div style="margin: 15px; padding: 15px; border: 1px solid var(--border); background: var(--bg-alt);">
+            <div style="font-weight: bold; margin-bottom: 10px;">Gaussian Mixture Model (GMM) Stop Loss Calculator</div>
+            <button id="run-gmm-btn" style="padding: 5px 15px; margin-bottom: 10px;">Calculate GMM Dynamic Stop (GC)</button>
+            <div id="gmm-results" style="font-family: monospace; white-space: pre-wrap; color: var(--green);">Ready.</div>
+          </div>
+<div id="backtest-results" style="padding: 15px; white-space: pre-wrap; font-family: monospace; height: 500px; overflow-y: scroll;"></div>
+        </div>
+        <div class="panel-foot muted"></div>
+      </div>
+    </section>
+  </main>
+
   <div id="chart-overlay" class="overlay hidden">
     <div class="overlay-box">
       <div class="overlay-head"><span id="chart-title"></span><button id="chart-close">✕</button></div>
@@ -80,3 +148,7 @@
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
+
+
+
+

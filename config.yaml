@@ -100,6 +100,9 @@ cycle_series:      # market-cycle series (spec 2026-08-24); exactly one source k
   - { id: cot-crude,    name: "Crude net non-commercial",  unit: contracts, cftc: "067651" }
   - { id: cot-usd,      name: "USD idx net non-commercial",unit: contracts, cftc: "098662" }
   - { id: cot-gbp,      name: "GBP net non-commercial",    unit: contracts, cftc: "096742" }
+  - { id: cot-gold,     name: "Gold net non-commercial",   unit: contracts, cftc: "088691" }
+  - { id: cot-nasdaq,   name: "Nasdaq net non-commercial", unit: contracts, cftc: "209742" }
+  - { id: cot-spx,      name: "ES net non-commercial",     unit: contracts, cftc: "13874A" }
 
 cycle_tabs:        # layout only; rows reference cycle_series ids
   - id: risk
@@ -173,6 +176,9 @@ cycle_tabs:        # layout only; rows reference cycle_series ids
           - { series: cot-crude }
           - { series: cot-usd,     overlay: usd-broad }
           - { series: cot-gbp }
+          - { series: cot-gold }
+          - { series: cot-nasdaq }
+          - { series: cot-spx }
 
 calendar_map:      # first match wins — keep Core before CPI
   - { country: USD, match: "Core CPI",     series: us-core-cpi-yoy }

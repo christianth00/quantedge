@@ -7,6 +7,8 @@ import { renderNews } from "./panels/news.js";
 import { renderCycle } from "./panels/cycle.js";
 import { renderRefs } from "./panels/refs.js";
 import { initTabs } from "./tabs.js";
+import "./panels/menthorq.js";
+import "./panels/backtest.js";
 
 const POLL_MS = 60_000;
 const STALE_MINUTES = { equity: 20, bonds: 130, macro: 390, news: 40, defi: 35, midnight: 35, refs: 35 };  // ~2x cadence

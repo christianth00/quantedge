@@ -83,9 +83,97 @@ def create_app(store: Store, cfg: Config) -> FastAPI:
         bands = to_bands(store.points("cycle:usrec"))
         return {"bands": [[a.isoformat(), b.isoformat()] for a, b in bands]}
 
+    @app.get("/api/backtest")
+    def run_backtest(symbols: str = "GC", strategy: str = "gex_confluence", start: str = "2026-08-01", end: str = "2026-09-08", stop: str = "40", target: str = "80") -> dict:
+        import subprocess
+        import os
+        from glob import glob
+        
+        cwd = os.path.join(os.path.dirname(__file__), '..', 'backtester')
+        
+        # Clean up old reports
+        for f in glob(os.path.join(cwd, 'reports', '*.txt')):
+            os.remove(f)
+
+        sym_list = symbols.split(",") if symbols else ["GC"]
+
+        try:
+            # We want to override the stop and target ticks for the specific strategy.
+            # We can write a temporary yaml config to pass to the engine!
+            import yaml
+            override_cfg = {
+                "default_stop_ticks": int(stop),
+                "default_target_ticks": int(target)
+            }
+            cfg_path = os.path.join(cwd, "config", "ui_override.yaml")
+            with open(cfg_path, "w") as f:
+                yaml.dump(override_cfg, f)
+
+            cmd = [
+                'python', 'main.py', '--generate-synthetic', '--symbols'
+            ] + sym_list + [
+                '--strategy', strategy, '--config', cfg_path,
+                '--start', start, '--end', end, '--report'
+            ]
+            
+            result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+            
+            output = f"Command: {' '.join(cmd)}\n\n"
+            output += result.stdout + "\n" + result.stderr
+            
+            # Read report
+            report_files = glob(os.path.join(cwd, 'reports', '*.txt'))
+            if report_files:
+                with open(report_files[-1], 'r') as f:
+                    output += "\n\n=== REPORT ===\n" + f.read()
+            
+            return {"status": "success", "output": output}
+        except Exception as e:
+            return {"status": "error", "output": str(e)}
+
+    @app.get("/api/dynamic-stop")
+    def dynamic_stop(symbol: str = "GC") -> dict:
+        import os
+        import sys
+        cwd = os.path.join(os.path.dirname(__file__), '..', 'backtester')
+        sys.path.append(cwd)
+        
+        try:
+            from stop_loss import RegimeStopLossCalculator
+            import pandas as pd
+            import numpy as np
+            
+            # Fetch synthetic data or real data
+            # For demonstration, we use synthetic data simulating recent volatility
+            dates = pd.date_range("2026-01-01", periods=100)
+            df = pd.DataFrame({
+                "Close": np.linspace(2000, 2100, 100) + np.random.normal(0, 10, 100),
+                "High": np.linspace(2005, 2105, 100) + np.random.normal(0, 10, 100),
+                "Low": np.linspace(1995, 2095, 100) - np.random.normal(0, 10, 100),
+            }, index=dates)
+            
+            calc = RegimeStopLossCalculator(n_components=2)
+            res = calc.calculate_dynamic_stop(df, base_stop_ticks=40)
+            res["symbol"] = symbol
+            return res
+        except Exception as e:
+            return {"error": str(e)}
+
+    @app.get("/api/menthorq")
+    def menthorq() -> dict:
+        d = store.doc("menthorq_levels")
+        return d.payload if d else {}
+
     @app.get("/healthz")
     def healthz() -> dict:
         fetchers = store.statuses()
         return {"ok": all(_fetcher_healthy(f) for f in fetchers), "fetchers": fetchers}
 
     return app
+
+
+
+
+
+
+

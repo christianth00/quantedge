@@ -34,7 +34,8 @@ def build() -> tuple[FastAPI, AsyncIOScheduler]:
     app.router.on_shutdown.append(scheduler.shutdown)
 
     # Dev convenience: SERVE_UI=1 serves the repo's ui/ so no nginx is needed locally.
-    ui_dir = Path(__file__).resolve().parents[3] / "ui"  # parents[3] = repo root
+    ui_dir = Path.cwd().parent / "ui" if Path.cwd().name == "collector" else Path.cwd() / "ui"
+    print("UI DIR is:", ui_dir, "EXISTS:", ui_dir.is_dir(), "SERVE_UI:", os.environ.get("SERVE_UI"))
     if os.environ.get("SERVE_UI") == "1" and ui_dir.is_dir():
         app.mount("/", StaticFiles(directory=str(ui_dir), html=True), name="ui")
 
@@ -52,7 +53,8 @@ def build() -> tuple[FastAPI, AsyncIOScheduler]:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
     app, _scheduler = build()
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("UI_PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
 
 
 if __name__ == "__main__":

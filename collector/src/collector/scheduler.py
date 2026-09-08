@@ -26,6 +26,7 @@ from collector.fetchers.news import fetch_news
 from collector.fetchers.refs import fetch_refs
 from collector.fetchers.refs_history import fetch_refs_history
 from collector.fetchers.zyfai import fetch_defi
+from collector.fetchers.menthorq import fetch_menthorq
 from collector.http import GetBytes, GetText, PostJson
 from collector.runner import run_fetcher
 from collector.store import Store
@@ -43,6 +44,7 @@ def register_jobs(
     fred_api_key: str,
 ) -> None:
     fetchers = {
+        "menthorq": (3600, partial(fetch_menthorq, ["GC", "NQ", "ES", "SPX"], "sLRZxYbO4L7PJoYJXuJd98SuSBI7FGCn1lp8F1KO", store, get_text)),
         "equity": (cfg.cadences["equity"],
                    partial(fetch_equity, cfg.indexes, store, get_text)),
         "bonds": (cfg.cadences["bonds"],
